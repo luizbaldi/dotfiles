@@ -1,35 +1,23 @@
 #!/usr/bin/env bash
 
-# Location of the cloned dotfiles repository
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo "\nPreparing Baldi's workstation..\n"
 
-# Backup old files
-backup_dir=$HOME/.dotfiles_backup
-[ -d $backup_dir ] || mkdir $backup_dir || exit 1
+echo "\nInstalling Homebrew..."
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
-files_to_backup=(
-    .zshrc
-)
+echo "\nInstalling zsh..."
+sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
-for file in ${files_to_backup[@]}; do
-    echo -n "Doing backup for $file... "
-    mv $HOME/$file $backup_dir 2> /dev/null && echo "done!" || echo "not found, skipping..."
-done
+echo "\nUpdating Brew and Installing Git..."
+brew update && brew install git
 
-### Dependencies
-# Oh my Zsh for zsh, of course
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+echo "\nDefining git setup..."
+git config --global user.name "Baldi"
+git config --global user.email baldilp@gmail.com
 
-# Copying new dotfiles
-files_to_copy=(
-    zshrc
-    i3
-)
+echo "\nInstalling Node and NPM..."
+brew install node
 
-for file in ${files_to_copy[@]}; do
-    cp $DIR/$file $HOME/.$file -rv
-done
-
-echo "Everything is ready, hurray!"
+echo "Everything's ready, hurray!"
 
 exit 0
